@@ -1,7 +1,8 @@
+/********************* CSS Geral *********************/
 
 *{
   box-sizing: border-box;
-  font-family: Helvetica, sans-serif;
+  font-family: 'Roboto Slab', serif;
 }
 
 /********************* Navagação *********************/
@@ -35,6 +36,7 @@
   background-color: #fff;
   color: #f03e3e;
   border-color: #f03e3e;
+  transition: 300ms;
 }
 
 /********************* Banner *********************/
@@ -146,6 +148,14 @@
 
 .new-job .new-job-label {
   display: block;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  background-color: #f8f9fa;
+  padding: 1rem;  
+  border-top: 1px solid #ccc;
 }
 
 /********************* Pagina ADD *********************/
