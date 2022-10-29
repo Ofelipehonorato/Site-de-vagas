@@ -4,6 +4,9 @@ const app        = express()
 const path       = require('path')
 const db         = require('./db/connections')
 const bodyParser = require('body-parser')
+const Job        = require('./models/Job')
+const Sequelize  = require('sequelize')
+const Op         = require.Op
 
 const PORT = 3000
 
@@ -16,8 +19,12 @@ app.use(bodyParser.urlencoded({ extended: false}))
 
 // Handle bars
 app.set('views', path.join(__dirname, 'views'))
-app.engine('handlebars', exphbs({defaultLayout:'main'}))
-app.set('view engine', 'handlerbars')
+app.engine('handlebars', exphbs.engine({defaultLayout:'main'}))
+app.set('view engine', 'handlebars')
+
+//static folder
+app.use(express.static(path.join(__dirname, 'public')))
+
 
 // db connection
 db
@@ -31,8 +38,40 @@ db
 
 // routes
 app.get('/', (req, res) => {
-  res.send("Está funcionando")
-})
 
-//jobs routes
-app.use('/jobs', require('./routes/jobs'))
+  let search = req.query.job
+  let query  = '%'+search+'%' //Retornar resultados como: word -> wordpress, PH -> PHP
+
+  if(!search) {
+    Job.findAll({order: [
+      ['createdAt', 'DESC']
+    ]})
+    .then(jobs => {
+      res.render('index',{
+        jobs
+      })
+    })
+    .catch(err => console.log(err))
+  }  else {
+    Job.findAll({
+      where: {title: {[Op.like]: query}},
+      order: [
+        ['createdAt', 'DESC']
+    ]})
+    .then(jobs => {
+      console.log(search);
+      console.log(search);
+  
+      res.render('index', {
+        jobs, search
+      });
+  
+    })
+    .catch(err => console.log(err));
+  }
+
+  
+});
+
+// jobs routes
+app.use('/jobs', require('./routes/jobs'));
